@@ -42,6 +42,10 @@ half4 _ShadeColor;
 half _ToonNormalStrength;
 half _ToonAmbientStrength;  
 
+half _OutlineWidth;
+half4 _OutlineColor;
+half _OutlineBaseMapBlend;
+
 UNITY_TEXTURE_STREAMING_DEBUG_VARS;
 
 CBUFFER_END

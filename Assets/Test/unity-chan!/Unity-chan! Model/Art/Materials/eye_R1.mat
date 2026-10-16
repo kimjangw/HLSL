@@ -12,6 +12,7 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
+  - _OUTLINE_ON
   - _RIMLIGHT_ON
   - _TOON_ON
   m_InvalidKeywords: []
@@ -113,6 +114,8 @@ Material:
     - _GlossyReflections: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
+    - _OutlineBaseMapBlend: 0.5
+    - _OutlineWidth: 7.9
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1
@@ -129,7 +132,9 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
+    - _ToonAmbientStrength: 0.3
     - _ToonNormalStrength: 1
+    - _UseOutline: 1
     - _UseRim: 1
     - _UseToon: 1
     - _WorkflowMode: 1
@@ -139,6 +144,7 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _OutlineColor: {r: 0.19999996, g: 0.09999997, b: 0.09999997, a: 1}
     - _RimColor: {r: 64.75521, g: 64.75521, b: 64.75521, a: 1}
     - _ShadeColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _ShadowColor: {r: 0.8, g: 0.8, b: 1, a: 1}

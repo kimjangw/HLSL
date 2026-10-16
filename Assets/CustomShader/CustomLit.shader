@@ -89,8 +89,13 @@ Shader "Custom/CustomLit"
         _ShadeSoftness("Shade Softness", Range(0.001, 0.5)) = 0.05
         _ShadeColor("Shade Color", Color) = (0.5, 0.5, 0.5, 1)
         _ToonNormalStrength("Toon NormalMap Strength", Range(0, 1)) = 1
-        _ToonAmbientStrength("Toon Ambient Strength", Range(0, 1)) = 0.3
+        _ToonAmbientStrength("Toon Ambient Strength", Range(0, 1)) = 0.3 
 
+          [Header(Outline)]
+        [Toggle(_OUTLINE_ON)] _UseOutline("Use Outline", Float) = 0
+        _OutlineWidth("Outline Width", Range(0, 10)) = 3
+        _OutlineColor("Outline Color", Color) = (0.2, 0.1, 0.1, 1)
+        _OutlineBaseMapBlend("Outline BaseMap Blend", Range(0, 1)) = 0.5
     }
 
     SubShader
@@ -206,6 +211,25 @@ Shader "Custom/CustomLit"
            #include "CustomLitForwardPass.hlsl"
             ENDHLSL
         }
+
+          Pass
+        {
+            Name "Outline"
+            Tags { "LightMode" = "SRPDefaultUnlit" }
+
+            Cull Front
+
+            HLSLPROGRAM
+            #pragma target 2.0
+            #pragma vertex OutlinePassVertex
+            #pragma fragment OutlinePassFragment
+            #pragma multi_compile_instancing
+            #pragma shader_feature_local_vertex _OUTLINE_ON
+
+            #include "CustomLitOutlinePass.hlsl"
+            ENDHLSL
+        }
+
 
         Pass
         {
