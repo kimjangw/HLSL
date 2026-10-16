@@ -152,6 +152,17 @@ void InitializeBakedGIData(Varyings input, inout InputData inputData)
     #endif
 }
 
+// ▼▼▼ 추가 라이트 1개를 툰으로 계산 ▼▼▼
+half3 ToonAdditionalLight(Light light, half3 normalWS, half3 albedo)
+{
+    half NdotL = dot(normalWS, light.direction);
+    half toon = smoothstep(_ShadeThreshold - _ShadeSoftness, _ShadeThreshold + _ShadeSoftness, NdotL);
+    half shadowToon = smoothstep(0.5 - _ShadeSoftness, 0.5 + _ShadeSoftness, light.shadowAttenuation);
+
+    // 거리 감쇠(distanceAttenuation)는 끊지 않음 → 전구에서 멀어질수록 자연스럽게 약해짐
+    return albedo * toon * shadowToon * light.color * light.distanceAttenuation;
+}
+
 // ▼▼▼툰 조명 함수 ▼▼▼
 half4 ToonLighting(InputData inputData, SurfaceData surfaceData, float3 meshNormalWS)
 {
@@ -175,9 +186,32 @@ half4 ToonLighting(InputData inputData, SurfaceData surfaceData, float3 meshNorm
     half3 diffuse = surfaceData.albedo * lerp(_ShadeColor.rgb, 1.0, toon) * mainLight.color;
 
     // 5) 환경광(하늘색 반사): 빛이 안 닿는 면도 완전히 검지 않게
-    half3 ambient = surfaceData.albedo * inputData.bakedGI * surfaceData.occlusion;
+    half3 ambient = surfaceData.albedo * inputData.bakedGI * surfaceData.occlusion * _ToonAmbientStrength;
 
-    return half4(diffuse + ambient + surfaceData.emission, surfaceData.alpha);
+    // 6) 추가 라이트(Point, Spot) 루프 ▼▼▼
+    half3 additional = 0;
+#if defined(_ADDITIONAL_LIGHTS)
+    uint pixelLightCount = GetAdditionalLightsCount();
+
+    #if USE_CLUSTER_LIGHT_LOOP
+    // Forward+: 추가 Directional Light들 먼저 처리
+    [loop] for (uint lightIndex = 0; lightIndex < min(URP_FP_DIRECTIONAL_LIGHTS_COUNT, MAX_VISIBLE_LIGHTS); lightIndex++)
+    {
+        CLUSTER_LIGHT_LOOP_SUBTRACTIVE_LIGHT_CHECK
+        Light light = GetAdditionalLight(lightIndex, inputData.positionWS, inputData.shadowMask);
+        additional += ToonAdditionalLight(light, normalWS, surfaceData.albedo);
+    }
+    #endif
+
+    // 이 픽셀에 영향을 주는 Point / Spot Light
+    LIGHT_LOOP_BEGIN(pixelLightCount)
+        Light light = GetAdditionalLight(lightIndex, inputData.positionWS, inputData.shadowMask);
+        additional += ToonAdditionalLight(light, normalWS, surfaceData.albedo);
+    LIGHT_LOOP_END
+#endif
+
+
+     return half4(diffuse + ambient + additional + surfaceData.emission, surfaceData.alpha);
 }
 
 

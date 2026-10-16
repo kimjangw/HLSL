@@ -89,6 +89,7 @@ Shader "Custom/CustomLit"
         _ShadeSoftness("Shade Softness", Range(0.001, 0.5)) = 0.05
         _ShadeColor("Shade Color", Color) = (0.5, 0.5, 0.5, 1)
         _ToonNormalStrength("Toon NormalMap Strength", Range(0, 1)) = 1
+        _ToonAmbientStrength("Toon Ambient Strength", Range(0, 1)) = 0.3
 
     }
 

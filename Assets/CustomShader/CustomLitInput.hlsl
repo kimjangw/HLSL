@@ -40,6 +40,7 @@ half _ShadeThreshold;
 half _ShadeSoftness;
 half4 _ShadeColor;
 half _ToonNormalStrength;
+half _ToonAmbientStrength;  
 
 UNITY_TEXTURE_STREAMING_DEBUG_VARS;
 
