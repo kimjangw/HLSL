@@ -96,6 +96,7 @@ Shader "Custom/CustomLit"
         _OutlineWidth("Outline Width", Range(0, 10)) = 3
         _OutlineColor("Outline Color", Color) = (0.2, 0.1, 0.1, 1)
         _OutlineBaseMapBlend("Outline BaseMap Blend", Range(0, 1)) = 0.5
+         _OutlineZOffset("Outline Z Offset", Range(0, 0.05)) = 0
     }
 
     SubShader

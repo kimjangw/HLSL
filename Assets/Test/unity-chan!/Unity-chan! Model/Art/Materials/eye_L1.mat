@@ -129,6 +129,7 @@ Material:
     - _OcclusionStrength: 1
     - _OutlineBaseMapBlend: 0.5
     - _OutlineWidth: 7.9
+    - _OutlineZOffset: 0.0214
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1

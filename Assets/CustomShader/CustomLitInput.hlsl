@@ -45,6 +45,7 @@ half _ToonAmbientStrength;
 half _OutlineWidth;
 half4 _OutlineColor;
 half _OutlineBaseMapBlend;
+half _OutlineZOffset; 
 
 UNITY_TEXTURE_STREAMING_DEBUG_VARS;
 

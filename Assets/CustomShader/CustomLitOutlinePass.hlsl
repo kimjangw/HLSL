@@ -23,8 +23,11 @@ OutlineVaryings OutlinePassVertex(OutlineAttributes input)
     UNITY_SETUP_INSTANCE_ID(input);
 
 #if defined(_OUTLINE_ON)
-    // 3단계: 클립 공간(화면 기준)에서 밀어내기
-    float4 positionCS = TransformObjectToHClip(input.positionOS.xyz);
+   // 5단계: 뷰 공간에서 카메라 반대쪽으로 밀기 (Z Offset)
+    float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
+    float3 positionVS = TransformWorldToView(positionWS);
+    positionVS.z -= _OutlineZOffset;            // Unity 뷰 공간은 카메라 앞이 -Z → 빼면 더 멀어짐
+    float4 positionCS = TransformWViewToHClip(positionVS);
 
     float3 normalWS = TransformObjectToWorldNormal(input.normalOS);
     float3 normalCS = TransformWorldToHClipDir(normalWS);
