@@ -152,6 +152,35 @@ void InitializeBakedGIData(Varyings input, inout InputData inputData)
     #endif
 }
 
+// ▼▼▼툰 조명 함수 ▼▼▼
+half4 ToonLighting(InputData inputData, SurfaceData surfaceData, float3 meshNormalWS)
+{
+    // 1) 툰에 쓸 노멀: 0 = 메시 노멀(매끈), 1 = 노멀맵 노멀(디테일)
+    half3 normalWS = normalize(lerp(normalize(meshNormalWS), inputData.normalWS, _ToonNormalStrength));
+
+    // 2) 메인 라이트(Directional Light) 정보: 방향, 색
+    Light mainLight = GetMainLight(inputData.shadowCoord, inputData.positionWS, inputData.shadowMask);
+    half NdotL = dot(normalWS, mainLight.direction);
+
+      
+
+    // 3) 부드러운 NdotL을 밝음/어두움 두 단계로 끊기
+    half toon = smoothstep(_ShadeThreshold - _ShadeSoftness, _ShadeThreshold + _ShadeSoftness, NdotL);
+
+    // 3-1) 그림자(0 = 가려짐, 1 = 빛 받음)도 0.5를 기준으로 계단처럼 끊기
+    half shadowToon = smoothstep(0.5 - _ShadeSoftness, 0.5 + _ShadeSoftness, mainLight.shadowAttenuation);
+    toon *= shadowToon;   // 빛을 향하고(NdotL) + 가려지지도 않아야(그림자) 밝은 면
+
+    // 4) 직접광: 밝은 면은 텍스처 색, 어두운 면은 텍스처 × 그림자 색, 여기에 빛 색을 곱함
+    half3 diffuse = surfaceData.albedo * lerp(_ShadeColor.rgb, 1.0, toon) * mainLight.color;
+
+    // 5) 환경광(하늘색 반사): 빛이 안 닿는 면도 완전히 검지 않게
+    half3 ambient = surfaceData.albedo * inputData.bakedGI * surfaceData.occlusion;
+
+    return half4(diffuse + ambient + surfaceData.emission, surfaceData.alpha);
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////
 //                  Vertex and Fragment functions                            //
 ///////////////////////////////////////////////////////////////////////////////
@@ -260,7 +289,14 @@ void LitPassFragment(
 
     InitializeBakedGIData(input, inputData);
 
+    //half4 color = UniversalFragmentPBR(inputData, surfaceData);
+
+    #if defined(_TOON_ON)
+    half4 color = ToonLighting(inputData, surfaceData, input.normalWS);
+#else
     half4 color = UniversalFragmentPBR(inputData, surfaceData);
+#endif
+
     #if defined(_RIMLIGHT_ON)
     half3 rimNormalWS = normalize(input.normalWS);   // 노멀맵 영향 제외 (실험 B)
     half rim = pow(1.0 - saturate(dot(rimNormalWS, inputData.viewDirectionWS)), _RimPower);
@@ -281,7 +317,7 @@ void LitPassFragment(
     color.a = OutputAlpha(color.a, IsSurfaceTypeTransparent());
 
     outColor = color;
-   
+
 #ifdef _WRITE_RENDERING_LAYERS
     outRenderingLayers = EncodeMeshRenderingLayer();
 #endif

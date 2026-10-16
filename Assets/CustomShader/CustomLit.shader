@@ -82,6 +82,14 @@ Shader "Custom/CustomLit"
         _RimPower("Rim Power", Range(0.1, 20)) = 4
         _RimBackMask("Rim Backlight Mask", Range(0, 1)) = 0
         _RimSideMask("Rim Light-Side Mask", Range(0, 1)) = 0
+
+        [Header(Toon Shading)]
+        [Toggle(_TOON_ON)] _UseToon("Use Toon Shading", Float) = 0
+        _ShadeThreshold("Shade Threshold", Range(-1, 1)) = 0
+        _ShadeSoftness("Shade Softness", Range(0.001, 0.5)) = 0.05
+        _ShadeColor("Shade Color", Color) = (0.5, 0.5, 0.5, 1)
+        _ToonNormalStrength("Toon NormalMap Strength", Range(0, 1)) = 1
+
     }
 
     SubShader
@@ -143,6 +151,7 @@ Shader "Custom/CustomLit"
             #pragma shader_feature_local_fragment _SCREENSPACEREFLECTIONS_OFF
             #pragma shader_feature_local_fragment _SPECULAR_SETUP
             #pragma shader_feature_local_fragment _RIMLIGHT_ON
+            #pragma shader_feature_local_fragment _TOON_ON 
             // -------------------------------------
             // Universal Pipeline keywords
 #if defined(UNITY_PLATFORM_META_QUEST)

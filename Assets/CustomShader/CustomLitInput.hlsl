@@ -35,6 +35,12 @@ half4 _RimColor;
 half _RimPower;
 half _RimBackMask;
 half _RimSideMask;
+
+half _ShadeThreshold;
+half _ShadeSoftness;
+half4 _ShadeColor;
+half _ToonNormalStrength;
+
 UNITY_TEXTURE_STREAMING_DEBUG_VARS;
 
 CBUFFER_END
