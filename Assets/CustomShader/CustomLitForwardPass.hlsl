@@ -261,11 +261,27 @@ void LitPassFragment(
     InitializeBakedGIData(input, inputData);
 
     half4 color = UniversalFragmentPBR(inputData, surfaceData);
+    #if defined(_RIMLIGHT_ON)
+    half3 rimNormalWS = normalize(input.normalWS);   // 노멀맵 영향 제외 (실험 B)
+    half rim = pow(1.0 - saturate(dot(rimNormalWS, inputData.viewDirectionWS)), _RimPower);
+
+    half3 lightDirWS = GetMainLight().direction;
+
+    // ① 역광: 빛이 캐릭터 뒤(카메라 반대편)에 있을수록 1
+    half backFactor = saturate(dot(-inputData.viewDirectionWS, lightDirWS) * 0.5 + 0.5);
+    // ② 방향: 윤곽 중 빛을 향한 쪽일수록 1
+    half sideFactor = saturate(dot(rimNormalWS, lightDirWS) * 0.5 + 0.5);
+
+    rim *= lerp(1.0, backFactor, _RimBackMask);
+    rim *= lerp(1.0, sideFactor, _RimSideMask);
+
+    color.rgb += rim * _RimColor.rgb;
+#endif
     color.rgb = MixFog(color.rgb, inputData.fogCoord);
     color.a = OutputAlpha(color.a, IsSurfaceTypeTransparent());
 
     outColor = color;
-
+   
 #ifdef _WRITE_RENDERING_LAYERS
     outRenderingLayers = EncodeMeshRenderingLayer();
 #endif

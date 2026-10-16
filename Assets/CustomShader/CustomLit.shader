@@ -75,6 +75,13 @@ Shader "Custom/CustomLit"
         [HideInInspector][NoScaleOffset]unity_Lightmaps("unity_Lightmaps", 2DArray) = "" {}
         [HideInInspector][NoScaleOffset]unity_LightmapsInd("unity_LightmapsInd", 2DArray) = "" {}
         [HideInInspector][NoScaleOffset]unity_ShadowMasks("unity_ShadowMasks", 2DArray) = "" {}
+
+        [Header(Rim Light)]
+        [Toggle(_RIMLIGHT_ON)] _UseRim("Use Rim Light", Float) = 0
+        [HDR] _RimColor("Rim Color", Color) = (1,1,1,1)
+        _RimPower("Rim Power", Range(0.1, 20)) = 4
+        _RimBackMask("Rim Backlight Mask", Range(0, 1)) = 0
+        _RimSideMask("Rim Light-Side Mask", Range(0, 1)) = 0
     }
 
     SubShader
@@ -135,7 +142,7 @@ Shader "Custom/CustomLit"
             #pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
             #pragma shader_feature_local_fragment _SCREENSPACEREFLECTIONS_OFF
             #pragma shader_feature_local_fragment _SPECULAR_SETUP
-
+            #pragma shader_feature_local_fragment _RIMLIGHT_ON
             // -------------------------------------
             // Universal Pipeline keywords
 #if defined(UNITY_PLATFORM_META_QUEST)
@@ -551,5 +558,5 @@ Shader "Custom/CustomLit"
     }
 
     FallBack "Hidden/Universal Render Pipeline/FallbackError"
-    CustomEditor "UnityEditor.Rendering.Universal.ShaderGUI.LitShader"
+    //CustomEditor "UnityEditor.Rendering.Universal.ShaderGUI.LitShader"
 }

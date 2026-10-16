@@ -31,7 +31,12 @@ half _ClearCoatMask;
 half _ClearCoatSmoothness;
 half _DetailAlbedoMapScale;
 half _DetailNormalMapScale;
+half4 _RimColor;
+half _RimPower;
+half _RimBackMask;
+half _RimSideMask;
 UNITY_TEXTURE_STREAMING_DEBUG_VARS;
+
 CBUFFER_END
 
 // NOTE: Do not ifdef the properties for dots instancing, but ifdef the actual usage.
