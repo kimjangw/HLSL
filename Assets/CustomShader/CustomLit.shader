@@ -97,6 +97,12 @@ Shader "Custom/CustomLit"
         _OutlineColor("Outline Color", Color) = (0.2, 0.1, 0.1, 1)
         _OutlineBaseMapBlend("Outline BaseMap Blend", Range(0, 1)) = 0.5
          _OutlineZOffset("Outline Z Offset", Range(0, 0.05)) = 0
+
+         [Header(Stencil)]
+        [IntRange] _StencilRef("Stencil Ref", Range(0, 255)) = 0
+        [Enum(UnityEngine.Rendering.CompareFunction)] _StencilComp("Stencil Comp", Float) = 8   // 8 = Always
+        [Enum(UnityEngine.Rendering.StencilOp)] _StencilPass("Stencil Pass", Float) = 0         // 0 = Keep
+
     }
 
     SubShader
@@ -131,6 +137,13 @@ Shader "Custom/CustomLit"
             ZWrite[_ZWrite]
             Cull[_Cull]
             AlphaToMask[_AlphaToMask]
+
+             Stencil
+            {
+                Ref [_StencilRef]
+                Comp [_StencilComp]
+                Pass [_StencilPass]
+            }
 
             HLSLPROGRAM
             #pragma target 2.0

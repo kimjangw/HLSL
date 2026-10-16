@@ -147,6 +147,9 @@ Material:
     - _SpecularPower: 20
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
+    - _StencilComp: 8
+    - _StencilPass: 2
+    - _StencilRef: 1
     - _Surface: 0
     - _ToonAmbientStrength: 0.3
     - _ToonNormalStrength: 1
